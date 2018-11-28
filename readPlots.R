@@ -4,7 +4,7 @@ library(stringi)
 plots <- fread("C:\\Users\\robert\\Desktop\\R\\IMDB\\plot.list",sep = "\n")
 plots <- plots[1:100000,]
 wek <- plots$`-------------------------------------------------------------------------------` 
-
+ 
 name <- ""
 text <- ""
 data <-data.table("d","d")
