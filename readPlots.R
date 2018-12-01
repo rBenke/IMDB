@@ -48,4 +48,3 @@ data2 <- data[,`:=`(pos = str_locate(name, year)[1],first = str_locate(name, "MV
 #dim(data)
 write.csv(data,file ="plots3.csv")
 
-asdf<-fread("plots3_2.csv")
