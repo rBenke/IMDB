@@ -1,6 +1,6 @@
 #--------------------------------------------
 # reading genres.csv (orginal) and save to data.table:
-#  Name, Year, lp, genres - genres2.csv, n_obs = 2.657.655
+#  Name, Year, No, genres - genres2.csv, n_obs = 2.657.655
 #--------------------------------------------
 library(data.table)
 library(tidyverse)
@@ -9,28 +9,27 @@ genres <- read.csv("C:\\Users\\robert\\Desktop\\R\\IMDB\\genres.csv",sep = "\t")
 #genres <- head(genres,100000) 
 
 genresDT <- genres %>% as.data.table()
-genresDT[,lp := seq.int(nrow(genresDT))]
+genresDT[,No := seq.int(nrow(genresDT))]
 
 genresDT[,gen1 := as.character(stri_extract_last_words(type2))]
-genresDT[,gen1 := as.character(ifelse(is.na(gen1),"a",gen1)),by = lp]
+genresDT[,gen1 := as.character(ifelse(is.na(gen1),"a",gen1)),by = No]
 
 genresDT[,gen2 := as.character(stri_extract_last_words(TYpe))]
-genresDT[,gen2 := as.character(ifelse(is.na(gen2),as.character("a"),gen2)),by = lp]
+genresDT[,gen2 := as.character(ifelse(is.na(gen2),as.character("a"),gen2)),by = No]
 
 genresDT[,gen3 := stri_extract_last_words(Coment)]
-genresDT[,gen3 := ifelse(is.na(gen3),"a",gen3),by = lp]
+genresDT[,gen3 := ifelse(is.na(gen3),"a",gen3),by = No]
 str(genresDT)
 
-genresDT[,genres := as.character(ifelse(gen1!="a",gen1,NA)),by = lp]
-genresDT[is.na(genresDT$genres),genres :=as.character(ifelse(gen2!="a",gen2,NA)),by = lp]
-genresDT[is.na(genresDT$genres),genres := as.character(ifelse(gen3!="a",gen3,NA)),by = lp]
+genresDT[,genres := as.character(ifelse(gen1!="a",gen1,NA)),by = No]
+genresDT[is.na(genresDT$genres),genres :=as.character(ifelse(gen2!="a",gen2,NA)),by = No]
+genresDT[is.na(genresDT$genres),genres := as.character(ifelse(gen3!="a",gen3,NA)),by = No]
 
 genresDT[,':='(gen1=NULL, gen2=NULL,gen3=NULL,Coment=NULL, TYpe=NULL, type2=NULL )]
 gen <- genresDT$genres %>% unique() %>% as.vector()
 gen <- gen[1:27]
 genresDT <- genresDT[genres %in% gen,]
 write.csv(genresDT,file = "genres2.csv")
-
 
 #--------------------------------------------
 # reading plot.list (orginal) and save to data.table:
@@ -104,8 +103,8 @@ names <- fread("genres2.csv")
 names[,Year := as.integer(str_extract(Year, "[1-2][0-9]{3}"))]
 
 plots[,dots := str_count(plot, "\\.|\\?|!"),by = No]
-names <- names[,':='(V1 = NULL, lp = NULL)]
-plots <- plots[,':='(V1 = NULL, lp = NULL, pos = NULL, first = NULL)]
+names <- names[,':='(V1 = NULL)]
+plots <- plots[,':='(V1 = NULL, pos = NULL, first = NULL)]
 
 plots<- plots[order(name, dots),head(.SD, 1),by = name] #choose the longest plot for movie
 
@@ -118,6 +117,8 @@ setkeyv(plots,keycols)
 DTmerge <- plots[names]
 DT_final<-DTmerge[!is.na(plot),.(name,year,plot,genres,No,dots)]
 DT_final<-DT_final[nchar(name)>2,]
+
+#dim(plots)-dim(DT_final[,head(.SD,1), by = name]) 42.699, we lose them :(
 
 write.csv(DT_final,file ="DT_final.csv")
 
