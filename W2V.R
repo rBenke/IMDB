@@ -92,7 +92,7 @@ data <- data[2:nrow(data)]
 data <- data %>% unique() 
 
 
-
+df
 plot2eigen <- function(plot){
   plot = "after reach mutual new york sever financi servic compani robert j . smith becam total perman disabl result auto accid . unabl work smith interview reach industri . sport champion rock star busi other reach status interview . thank everi industri learn develop habit strategi reach top chosen profess . becom disabl chang career reason learn best yet ."
   senten = sentences[3]
